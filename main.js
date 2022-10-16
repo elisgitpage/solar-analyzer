@@ -164,12 +164,17 @@ function getPixelData(event) {
   console.log("Coordinate x: " + x,
               "coordinate y: " + y,
               `\npixel color: R${pixelColor[0]}, G${pixelColor[1]}, B${pixelColor[2]}, A${pixelColor[3]}`);
-  let closestCategory = findClosestCategory(pixelColor, categoryAverages);
-  let avgEnergy = energyCategories[closestCategory];
-  let colorLogMessage = `closest category: ${i}, daily energy: ${avgEnergy.daily} kWh/m^2, yearly energy: ${avgEnergy.yearly} GWh/km^2/yr, color: `
-  logColor(categoryAverages[closestCategory], colorLogMessage);
   let inGreySpect = inGreySpectrum(pixelColor);
   console.log('Pixel in grey spectrum?: ', inGreySpect);
+  if(!inGreySpect) {
+    let closestCategory = findClosestCategory(pixelColor, categoryAverages);
+    let avgEnergy = energyCategories[closestCategory];
+    let colorLogMessage = `closest category: ${i}, daily energy: ${avgEnergy.daily} kWh/m^2, yearly energy: ${avgEnergy.yearly} GWh/km^2/yr, color: `
+    logColor(categoryAverages[closestCategory], colorLogMessage);
+  } else {
+    console.log("No energy data to log");
+  }
+
 }
 
 function yPosToImageDataPos(yPos) {
