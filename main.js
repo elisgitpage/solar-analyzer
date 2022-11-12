@@ -20,7 +20,7 @@ const rgbaImageData = ctx.getImageData(
   0, 0, img.width, img.height);
 
 // Add canvas with image to main div as child
-mainDiv.appendChild(canvas);
+//mainDiv.appendChild(canvas);
 
 const colorLegendDims = {x: 43, y: 26};
 
@@ -53,6 +53,13 @@ pixelColor.style.height = '100px';
 pixelColor.style.width = '100px';
 
 pixelColor.style.backgroundColor = `rgba(${imageAvgColor[0]}, ${imageAvgColor[1]}, ${imageAvgColor[2]}, ${imageAvgColor[3]})`;
+
+/*************************Fetch Http Request for Solar GIS map */
+
+// const Url = 'https://solargis.com/file?url=download/Africa/Africa_PVOUT_mid-size-map_180x210mm-300dpi_v20210430.png&amp;bucket=solargis';
+
+// fetch(Url)
+// .then(data => console.log(data));
 
 /*************************Function definition section********/
 
@@ -229,4 +236,5 @@ function blockOutGreySpectrumPixels() {
     }
   }
 }
+
 
