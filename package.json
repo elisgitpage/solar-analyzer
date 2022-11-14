@@ -1,0 +1,27 @@
+{
+  "name": "solar-analyzer",
+  "version": "1.0.0",
+  "description": "Tool to analyze Solar GIS world map of Global Horizontal Irradiation by showing information for clicked location.",
+  "main": "main.js",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^8.27.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.5.1",
+    "eslint-plugin-promise": "^6.1.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elisgitpage/solar-analyzer.git"
+  },
+  "author": "Eli Abidor",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/elisgitpage/solar-analyzer/issues"
+  },
+  "homepage": "https://github.com/elisgitpage/solar-analyzer#readme"
+}

@@ -1,56 +1,62 @@
+// eslint-disable-next-line spaced-comment
 /*******************Script definition section **************/
 
 // select img div and insert world GHI map from as CanvasRenderingContext2D
- // TODO: img div is hidden so really need to just pull data from image file directly
-const img = document.querySelector('#world-ghi');
-const canvas = document.createElement('canvas');
-const ctx = canvas.getContext('2d');
+// TODO: img div is hidden so really need to just pull data from image file directly
+// const img = document.querySelector("#world-ghi");
+const worldImg = new Image(100, 200);
+worldImg.src = "./assets/World_GHI_mid-size-map_160x95mm-300dpi_v20191015.png";
+worldImg.id = "new-img";
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
 
-let mainDiv = document.querySelector('#main');
+let mainDiv = document.querySelector("#main");
 
-canvas.width = img.width;
-canvas.height = img.height;
+canvas.width = worldImg.width;
+canvas.height = worldImg.height;
 
-ctx.drawImage(img, 0, 0);
+ctx.drawImage(worldImg, 0, 0);
 
-console.log('Script is working!');
+console.log("Script is working!");
 
 // Pull Pixel data from Canvas
-const rgbaImageData = ctx.getImageData(
-  0, 0, img.width, img.height);
+const rgbaImageData = ctx.getImageData(0, 0, img.width, img.height);
 
 // Add canvas with image to main div as child
 //mainDiv.appendChild(canvas);
-
-const colorLegendDims = {x: 43, y: 26};
+mainDiv.appendChild(worldImg);
+const colorLegendDims = { x: 43, y: 26 };
 
 let energyCategories = buildEnergyCategories();
 
-console.log('Energy Categories:', energyCategories);
+console.log("Energy Categories:", energyCategories);
 
 let categoryAverages = calculateEnergyColorAverages();
 
-for(i = 0; i < 28; i++) {
+for (i = 0; i < 28; i++) {
   logColor(categoryAverages[i], `Color category ${i}: `);
 }
 
 let globalSolarAverageDaily = calculateGlobalSolarEnergyAverage();
 
-let displayDiv = document.getElementById('display');
-displayDiv.innerHTML = `Global Daily Average Solar Energy: ${globalSolarAverageDaily} kWh/m^2/day`
-canvas.after(displayDiv);
+let globalAverageDiv = document.getElementById("global-average");
+globalAverageDiv.innerHTML = `Global Daily Average Solar Energy: ${globalSolarAverageDaily} kWh/m^2/day`;
+//canvas.after(globalAverageDiv);
 
-canvas.addEventListener("mousedown", e => getPixelData(e))
+let pixelDataDiv = document.getElementById("pixel-data");
+//canvas.after(pixelDataDiv);
 
-console.log('imageData length', rgbaImageData.data.length);
+canvas.addEventListener("mousedown", (e) => showPixelData(e));
+
+console.log("imageData length", rgbaImageData.data.length);
 
 let imageAvgColor = calculateWholeImageAverageColor();
 
 // Draw rectangle with background color matching average pixel color of above image
-let pixelColor = document.querySelector('#pixel-color');
+let pixelColor = document.querySelector("#pixel-color");
 console.log(pixelColor);
-pixelColor.style.height = '100px';
-pixelColor.style.width = '100px';
+pixelColor.style.height = "100px";
+pixelColor.style.width = "100px";
 
 pixelColor.style.backgroundColor = `rgba(${imageAvgColor[0]}, ${imageAvgColor[1]}, ${imageAvgColor[2]}, ${imageAvgColor[3]})`;
 
@@ -65,45 +71,52 @@ pixelColor.style.backgroundColor = `rgba(${imageAvgColor[0]}, ${imageAvgColor[1]
 
 function fillLegendColors() {
   let x, y;
-  for(i = 0; i < 28; i++) {
-    x = 303 + i * (1578 - 303)/27;
+  for (i = 0; i < 28; i++) {
+    x = 303 + (i * (1578 - 303)) / 27;
     y = 963;
     ctx.fillRect(colorLegendDims.x, colorLegendDims.y, 43, 26); //43, 26
   }
 }
 
-function logColor (rgba, message = '') {
+function logColor(rgba, message = "") {
   let cssRGBA = `rgba(${rgba[0]}, ${rgba[1]}, ${rgba[2]}, ${rgba[3]})`;
-  console.log(`'${message}%cR${rgba[0]}, G${rgba[1]}, B${rgba[2]}, A${rgba[3]}`, `background: ${cssRGBA}`);
+  console.log(
+    `'${message}%cR${rgba[0]}, G${rgba[1]}, B${rgba[2]}, A${rgba[3]}`,
+    `background: ${cssRGBA}`
+  );
 }
 
-function buildEnergyCategories () {
+function buildEnergyCategories() {
   let energyCategories = [];
 
-  for(i = 0; i < 28; i++) {
+  for (i = 0; i < 28; i++) {
     bucket = {
       daily: 2.1 + i * 0.2,
-      yearly: 766.5 + i * 73
-    }
-    energyCategories.push(bucket)
+      yearly: 766.5 + i * 73,
+    };
+    energyCategories.push(bucket);
   }
 
   return energyCategories;
 }
 
 /*
-*Find the average color of each of the energy legend color boxes
-*/
+ *Find the average color of each of the energy legend color boxes
+ */
 function calculateEnergyColorAverages() {
   let averages = [];
-  for(i = 0; i < 28; i++) {
-    x = 303 + i * (1578 - 303)/27;
+  for (i = 0; i < 28; i++) {
+    x = 303 + (i * (1578 - 303)) / 27;
     y = 963;
-    let rgbaData, redSum = 0, greenSum = 0, blueSum = 0, alphaSum = 0;
+    let rgbaData,
+      redSum = 0,
+      greenSum = 0,
+      blueSum = 0,
+      alphaSum = 0;
     let pixelCount = colorLegendDims.x * colorLegendDims.y;
 
-    for(let j = 0; j < 43; j++) {
-      for(let k = 0; k < 26; k++) {
+    for (let j = 0; j < 43; j++) {
+      for (let k = 0; k < 26; k++) {
         // console.log(`x: ${x + j}, y: ${y}`)
         rgbaData = ctx.getImageData(x + j, 963 + k, 1, 1).data;
         //console.log(rgbaData);
@@ -114,25 +127,32 @@ function calculateEnergyColorAverages() {
       }
     }
 
-    redAvg = redSum/pixelCount;
-    greenAvg = greenSum/pixelCount;
-    blueAvg = blueSum/pixelCount;
-    alphaAvg = alphaSum/pixelCount;
-    console.log(`Position ${i}, R${redAvg}, G${greenAvg}, B${blueAvg}, A${alphaAvg}`);
+    redAvg = redSum / pixelCount;
+    greenAvg = greenSum / pixelCount;
+    blueAvg = blueSum / pixelCount;
+    alphaAvg = alphaSum / pixelCount;
+    console.log(
+      `Position ${i}, R${redAvg}, G${greenAvg}, B${blueAvg}, A${alphaAvg}`
+    );
     averages.push([redAvg, greenAvg, blueAvg, alphaAvg]);
   }
   return averages;
 }
 
 function findClosestCategory(rgba, averages) {
-  let redDist, greenDist, blueDist, distSum, closestCategory, smallestDist = Number.MAX_VALUE;
-  for(i = 0; i < 28; i++) {
+  let redDist,
+    greenDist,
+    blueDist,
+    distSum,
+    closestCategory,
+    smallestDist = Number.MAX_VALUE;
+  for (i = 0; i < 28; i++) {
     category = averages[i];
     redDist = Math.abs(rgba[0] - category[0]);
     greenDist = Math.abs(rgba[1] - category[1]);
     blueDist = Math.abs(rgba[2] - category[2]);
     distSum = redDist + greenDist + blueDist;
-    if(distSum < smallestDist) {
+    if (distSum < smallestDist) {
       smallestDist = distSum;
       closestCategory = i;
     }
@@ -143,45 +163,56 @@ function findClosestCategory(rgba, averages) {
 
 // Calculate average color for the whole image. Not very useful in current state since it include white/grey space and text, logos, and color legend
 function calculateWholeImageAverageColor() {
-  let RedSum = 0, GreenSum = 0, BlueSum = 0, AlphaSum = 0;
+  let RedSum = 0,
+    GreenSum = 0,
+    BlueSum = 0,
+    AlphaSum = 0;
 
-  for(let i = 0; i < rgbaImageData.data.length; i += 4) {
+  for (let i = 0; i < rgbaImageData.data.length; i += 4) {
     RedSum += rgbaImageData.data[i];
     GreenSum += rgbaImageData.data[i + 1];
     BlueSum += rgbaImageData.data[i + 2];
     AlphaSum += rgbaImageData.data[i + 3];
   }
-  
+
   const pixelCount = rgbaImageData.data.length / 4;
-  
-  let RedAverage = RedSum/pixelCount;
-  let GreenAverage = GreenSum/pixelCount;
-  let BlueAverage = BlueSum/pixelCount;
-  let AlphaAverage = AlphaSum/pixelCount;
-  console.log('RGBA avg: ', RedAverage, GreenAverage, BlueAverage, AlphaAverage);
+
+  let RedAverage = RedSum / pixelCount;
+  let GreenAverage = GreenSum / pixelCount;
+  let BlueAverage = BlueSum / pixelCount;
+  let AlphaAverage = AlphaSum / pixelCount;
+  console.log(
+    "RGBA avg: ",
+    RedAverage,
+    GreenAverage,
+    BlueAverage,
+    AlphaAverage
+  );
   return [RedAverage, GreenAverage, BlueAverage, AlphaAverage];
 }
 
 // pull the pixel data for the clicked on pixel. Log x, y coordinates and rgba color values, with background color of rgba values set to that color.
-function getPixelData(event) {
+function showPixelData(event) {
   let rect = canvas.getBoundingClientRect();
   let x = event.clientX - rect.left;
-  let y  = event.clientY - rect.top;
+  let y = event.clientY - rect.top;
+  pixelDataDiv.children[0].textContent = `x-coordinate: ${x}, y-coordinate: ${y}`;
   let pixelColor = ctx.getImageData(x, y, 1, 1).data;
-  console.log("Coordinate x: " + x,
-              "coordinate y: " + y,
-              `\npixel color: R${pixelColor[0]}, G${pixelColor[1]}, B${pixelColor[2]}, A${pixelColor[3]}`);
+  console.log(
+    "Coordinate x: " + x,
+    "coordinate y: " + y,
+    `\npixel color: R${pixelColor[0]}, G${pixelColor[1]}, B${pixelColor[2]}, A${pixelColor[3]}`
+  );
   let inGreySpect = inGreySpectrum(pixelColor);
-  console.log('Pixel in grey spectrum?: ', inGreySpect);
-  if(!inGreySpect) {
+  console.log("Pixel in grey spectrum?: ", inGreySpect);
+  if (!inGreySpect) {
     let closestCategory = findClosestCategory(pixelColor, categoryAverages);
     let avgEnergy = energyCategories[closestCategory];
-    let colorLogMessage = `closest category: ${i}, daily energy: ${avgEnergy.daily} kWh/m^2, yearly energy: ${avgEnergy.yearly} GWh/km^2/yr, color: `
+    let colorLogMessage = `closest category: ${i}, daily energy: ${avgEnergy.daily} kWh/m^2, yearly energy: ${avgEnergy.yearly} GWh/km^2/yr, color: `;
     logColor(categoryAverages[closestCategory], colorLogMessage);
   } else {
     console.log("No energy data to log");
   }
-
 }
 
 function yPosToImageDataPos(yPos) {
@@ -194,13 +225,13 @@ function calculateGlobalSolarEnergyAverage() {
   let includedPixelCount = 0;
   let startPos = yPosToImageDataPos(170);
   let endPos = yPosToImageDataPos(870);
-  for(let i = startPos; i < endPos; i += 4) {
+  for (let i = startPos; i < endPos; i += 4) {
     red = rgbaImageData.data[i];
     green = rgbaImageData.data[i + 1];
     blue = rgbaImageData.data[i + 2];
     alpha = rgbaImageData.data[i + 3];
     let rgba = [red, green, blue, alpha];
-    if(!inGreySpectrum(rgba)) {
+    if (!inGreySpectrum(rgba)) {
       let closestCategory = findClosestCategory(rgba, categoryAverages);
       let avgEnergy = energyCategories[closestCategory];
       energySum += avgEnergy.daily;
@@ -210,7 +241,11 @@ function calculateGlobalSolarEnergyAverage() {
 
   let avgDailyEnergyGlobal = energySum / includedPixelCount;
 
-  console.log('Global average daily energy: ', avgDailyEnergyGlobal, 'kWh/m^2/day');
+  console.log(
+    "Global average daily energy: ",
+    avgDailyEnergyGlobal,
+    "kWh/m^2/day"
+  );
   return avgDailyEnergyGlobal;
 }
 
@@ -224,17 +259,15 @@ function inGreySpectrum(rgba) {
 
 // color all pixels in image black if on the grey spectrum, and white if they are not. This was supposed to be the way to check if inGreySpectrum is correctly classifying pixels, but so far it runs forever and I haven't bothered waiting to see if it finished, correctly or otherwise.
 function blockOutGreySpectrumPixels() {
-  for(i = 0; i < img.width; i++) {
-    for(j = 0; j < img.height; i++) {
+  for (i = 0; i < img.width; i++) {
+    for (j = 0; j < img.height; i++) {
       let pixelColor = ctx.getImageData(i, j, 1, 1).data;
-      if(inGreySpectrum(pixelColor)) {
-        ctx.fillStyle = 'black';
+      if (inGreySpectrum(pixelColor)) {
+        ctx.fillStyle = "black";
       } else {
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = "white";
       }
       ctx.fillRect(i, j, 1, 1);
     }
   }
 }
-
-
