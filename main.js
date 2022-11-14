@@ -11,7 +11,7 @@ const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 
 let mainDiv = document.querySelector("#main");
-
+git;
 canvas.width = worldImg.width;
 canvas.height = worldImg.height;
 
