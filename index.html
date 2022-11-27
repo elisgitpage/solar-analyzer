@@ -8,30 +8,47 @@
   </head>
   <body>
     <style>
+      body {
+        background-color: cornflowerblue;
+      }
       #main {
         display: flex;
       }
+      canvas {
+        margin: 15px;
+      }
+      .data {
+        margin: 15px;
+        font-family: arial;
+        font-size: 25px;
+        /*font-weight: bold;*/
+        color: white;
+      }
+      #pixel-data div {
+        margin: 10px;
+      }
     </style>
     <div id="main">
-      <!-- <img
+      <img
+        style="display: none"
         id="world-ghi"
         src="./assets/World_GHI_mid-size-map_160x95mm-300dpi_v20191015.png"
         alt=""
-      /> -->
+      />
       <!--        style="display: none"
          <img id="africa-ghi" src="https://solargis.com/file?url=download/Africa/Africa_PVOUT_mid-size-map_180x210mm-300dpi_v20210430.png&amp;bucket=solargis"> -->
-      <div id="global-average"></div>
-      <div id="pixel-data">
-        <div id="x-y-coord"></div>
-        <div id="pixel-color"></div>
-        <div id="grey-spectrum"></div>
-        <div id="daily-energy"></div>
-        <div id="yearly-energy"></div>
+      <div class="data">
+        <div id="global-average"></div>
+        <div id="pixel-data">
+          <div id="x-y-coord"></div>
+          <div id="pixel-color"></div>
+          <div id="grey-spectrum"></div>
+          <div id="energy-category"></div>
+          <div id="daily-energy"></div>
+          <div id="yearly-energy"></div>
+        </div>
       </div>
     </div>
-
-    <div id="pixel-color"></div>
-    <div id="avg-color"></div>
 
     <script src="main.js"></script>
   </body>

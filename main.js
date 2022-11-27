@@ -3,7 +3,7 @@
 
 // select img div and insert world GHI map from as CanvasRenderingContext2D
 // TODO: img div is hidden so really need to just pull data from image file directly
-// const img = document.querySelector("#world-ghi");
+const img = document.querySelector("#world-ghi");
 const worldImg = new Image(100, 200);
 worldImg.src = "./assets/World_GHI_mid-size-map_160x95mm-300dpi_v20191015.png";
 worldImg.id = "new-img";
@@ -11,11 +11,10 @@ const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 
 let mainDiv = document.querySelector("#main");
-git;
-canvas.width = worldImg.width;
-canvas.height = worldImg.height;
+canvas.width = img.width;
+canvas.height = img.height;
 
-ctx.drawImage(worldImg, 0, 0);
+ctx.drawImage(img, 0, 0);
 
 console.log("Script is working!");
 
@@ -24,7 +23,8 @@ const rgbaImageData = ctx.getImageData(0, 0, img.width, img.height);
 
 // Add canvas with image to main div as child
 //mainDiv.appendChild(canvas);
-mainDiv.appendChild(worldImg);
+mainDiv.insertBefore(canvas, mainDiv.children[0]);
+//mainDiv.appendChild(worldImg);
 const colorLegendDims = { x: 43, y: 26 };
 
 let energyCategories = buildEnergyCategories();
@@ -40,7 +40,9 @@ for (i = 0; i < 28; i++) {
 let globalSolarAverageDaily = calculateGlobalSolarEnergyAverage();
 
 let globalAverageDiv = document.getElementById("global-average");
-globalAverageDiv.innerHTML = `Global Daily Average Solar Energy: ${globalSolarAverageDaily} kWh/m^2/day`;
+globalAverageDiv.innerHTML = `Global Daily Average Solar Energy: ${globalSolarAverageDaily.toFixed(
+  3
+)} kWh/m^2/day`;
 //canvas.after(globalAverageDiv);
 
 let pixelDataDiv = document.getElementById("pixel-data");
@@ -53,12 +55,12 @@ console.log("imageData length", rgbaImageData.data.length);
 let imageAvgColor = calculateWholeImageAverageColor();
 
 // Draw rectangle with background color matching average pixel color of above image
-let pixelColor = document.querySelector("#pixel-color");
-console.log(pixelColor);
-pixelColor.style.height = "100px";
-pixelColor.style.width = "100px";
+// let pixelColor = document.querySelector("#pixel-color");
+// console.log(pixelColor);
+// pixelColor.style.height = "100px";
+// pixelColor.style.width = "100px";
 
-pixelColor.style.backgroundColor = `rgba(${imageAvgColor[0]}, ${imageAvgColor[1]}, ${imageAvgColor[2]}, ${imageAvgColor[3]})`;
+// pixelColor.style.backgroundColor = `rgba(${imageAvgColor[0]}, ${imageAvgColor[1]}, ${imageAvgColor[2]}, ${imageAvgColor[3]})`;
 
 /*************************Fetch Http Request for Solar GIS map */
 
@@ -196,21 +198,39 @@ function showPixelData(event) {
   let rect = canvas.getBoundingClientRect();
   let x = event.clientX - rect.left;
   let y = event.clientY - rect.top;
-  pixelDataDiv.children[0].textContent = `x-coordinate: ${x}, y-coordinate: ${y}`;
+  xGui = x.toFixed(3);
+  yGui = y.toFixed(3);
+  pixelDataDiv.children[0].textContent = `X-coordinate: ${xGui}, Y-coordinate: ${yGui}`;
   let pixelColor = ctx.getImageData(x, y, 1, 1).data;
+  let pixelColorDiv = document.getElementById("pixel-color");
+  pixelColorDiv.innerHTML = `Pixel color: <span>R${pixelColor[0]}, G${pixelColor[1]}, B${pixelColor[2]}, A${pixelColor[3]}</span>`;
+  let colorSpan = pixelColorDiv.querySelector("span");
+  let cssRGBA = `rgba(${pixelColor[0]}, ${pixelColor[1]}, ${pixelColor[2]}, ${pixelColor[3]})`;
+  colorSpan.style = `background: ${cssRGBA}`;
   console.log(
     "Coordinate x: " + x,
     "coordinate y: " + y,
-    `\npixel color: R${pixelColor[0]}, G${pixelColor[1]}, B${pixelColor[2]}, A${pixelColor[3]}`
+    `\nPixel color: R${pixelColor[0]}, G${pixelColor[1]}, B${pixelColor[2]}, A${pixelColor[3]}`
   );
   let inGreySpect = inGreySpectrum(pixelColor);
   console.log("Pixel in grey spectrum?: ", inGreySpect);
   if (!inGreySpect) {
+    let greySpectdiv = document.getElementById("grey-spectrum");
+    greySpectdiv.innerHTML = "In Grey Spectrum? NO";
     let closestCategory = findClosestCategory(pixelColor, categoryAverages);
     let avgEnergy = energyCategories[closestCategory];
     let colorLogMessage = `closest category: ${i}, daily energy: ${avgEnergy.daily} kWh/m^2, yearly energy: ${avgEnergy.yearly} GWh/km^2/yr, color: `;
+    let energyCategoryDiv = document.getElementById("energy-category");
+    energyCategoryDiv.innerHTML = `Insolation Category #: ${closestCategory}`;
+    let dailyEnergyDiv = document.getElementById("daily-energy");
+    dailyEnergyDiv.innerHTML = `Daily Energy: ${avgEnergy.daily.toFixed(
+      3
+    )} kWh/m^2/day`;
+    let yearlyEnergyDiv = document.getElementById("yearly-energy");
+    yearlyEnergyDiv.innerHTML = `Yearly Energy: ${avgEnergy.yearly} GWh/km^2/yr`;
     logColor(categoryAverages[closestCategory], colorLogMessage);
   } else {
+    greySpectdiv.innerHTML = "In Grey Spectrum? YES";
     console.log("No energy data to log");
   }
 }
@@ -249,7 +269,11 @@ function calculateGlobalSolarEnergyAverage() {
   return avgDailyEnergyGlobal;
 }
 
-// check if the provided color, given in rgba format, falls on the grey spectrum. In other words, are rgb values close to each other (all are <7 difference in value b/w each other)
+/**
+ * check if the provided color, given in rgba format, falls on the grey spectrum. In other words, are rgb values close to each other (all are <7 difference in value b/w each other)
+ * @param {Uint8ClampedArray} rgba
+ * @returns {boolean}
+ */
 function inGreySpectrum(rgba) {
   let redGreenDistance = Math.abs(rgba[0] - rgba[1]);
   let greenBlueDistance = Math.abs(rgba[1] - rgba[2]);
