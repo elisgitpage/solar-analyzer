@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Solar Analyzer</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicons/sun-32.png" />
   </head>
   <body>
     <style>
@@ -27,7 +28,12 @@
       #pixel-data div {
         margin: 10px;
       }
+
+      #pixel-data #energy-info {
+        margin: 0px;
+      }
     </style>
+    <div id="msg"></div>
     <div id="main">
       <img
         style="display: none"
@@ -43,9 +49,11 @@
           <div id="x-y-coord"></div>
           <div id="pixel-color"></div>
           <div id="grey-spectrum"></div>
-          <div id="energy-category"></div>
-          <div id="daily-energy"></div>
-          <div id="yearly-energy"></div>
+          <div id="energy-info">
+            <div id="energy-category"></div>
+            <div id="daily-energy"></div>
+            <div id="yearly-energy"></div>
+          </div>
         </div>
       </div>
     </div>

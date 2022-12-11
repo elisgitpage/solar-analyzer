@@ -8,6 +8,7 @@ let categoryAverages;
 let energyCategories;
 const colorLegendDims = { x: 43, y: 26 };
 const aimg = document.querySelector("#world-ghi");
+getMsg();
 const img = new Image();
 img.src = "./assets/World_GHI_mid-size-map_160x95mm-300dpi_v20191015.png";
 img.id = "new-img";
@@ -37,6 +38,26 @@ img.onload = () => {
 // .then(data => console.log(data));
 
 /*************************Function definition section********/
+
+function getMsg() {
+  // Creates a promise object for retrieving the desired data
+  fetch("http://localhost:4001/api")
+    // When recieved, exposes the JSON component
+    .then((response) => {
+      return response.json();
+    })
+    // Displays the message on the page
+    .then((json) => {
+      new_msg = "Server message: " + json.msg;
+    })
+    .catch((e) => {
+      console.log(e);
+      new_msg = e.message;
+    })
+    .finally(() => {
+      document.getElementById("msg").innerHTML = new_msg;
+    });
+}
 
 function initiateAnalysis() {
   ctx.drawImage(img, 0, 0);
@@ -223,8 +244,10 @@ function showPixelData(event) {
   let inGreySpect = inGreySpectrum(pixelColor);
   console.log("Pixel in grey spectrum?: ", inGreySpect);
   let greySpectdiv = document.getElementById("grey-spectrum");
+  let energyInfoDiv = document.getElementById("energy-info");
   if (!inGreySpect) {
     greySpectdiv.innerHTML = "In Grey Spectrum? NO";
+    energyInfoDiv.style.display = "block";
     let closestCategory = findClosestCategory(pixelColor, categoryAverages);
     colorSpan.style.color =
       closestCategory <= 12 && closestCategory >= 7 ? "black" : "white";
@@ -241,6 +264,8 @@ function showPixelData(event) {
     logColor(categoryAverages[closestCategory], colorLogMessage);
   } else {
     greySpectdiv.innerHTML = "In Grey Spectrum? YES";
+    energyInfoDiv.style.display = "none";
+    colorSpan.style.color = "black";
     console.log("No energy data to log");
   }
 }
