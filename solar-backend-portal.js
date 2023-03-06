@@ -22,32 +22,7 @@ export class SolarBackendPortal {
           return new_msg;
         })
     );
-    // .finally(() => {
-    //   return new_msg;
-    // });
   }
-
-  // async getOptions() {
-  //   // Creates a promise object for retrieving the desired data
-  //   let response = await fetch("http://localhost:4001/options");
-  //   // When recieved, exposes the JSON component
-  //   // .then((response) => {
-  //   //   return response.json();
-  //   // })
-  //   // // Displays the message on the page
-  //   // .then((json) => {
-  //   //   return json;
-  //   // })
-  //   // .catch((e) => {
-  //   //   console.log(e);
-  //   //   new_msg = e.message;
-  //   // })
-  //   // .finally(() => {
-  //   //   // document.getElementById("msg").innerHTML = new_msg;
-  //   // });
-  //   let json = await response.json();
-  //   return json;
-  // }
 
   getOptions() {
     // Creates a promise object for retrieving the desired data
@@ -58,17 +33,6 @@ export class SolarBackendPortal {
           return response.json();
         })
     );
-    // // Displays the message on the page
-    // .then((json) => {
-    //   new_msg = "Server message: " + json.msg;
-    // })
-    // .catch((e) => {
-    //   console.log(e);
-    //   new_msg = e.message;
-    // })
-    // .finally(() => {
-    //   document.getElementById("msg").innerHTML = new_msg;
-    // });
   }
 
   getMap(mapName) {

@@ -29,9 +29,6 @@ select.addEventListener("change", function () {
   getSelectedMap(selectedOption.text);
 });
 
-// document.getElementById("msg").innerHTML = new_msg;
-// getMsg();
-
 document.getElementById("msg").innerHTML = new_msg;
 const img = new Image();
 img.src = "./assets/World_GHI_mid-size-map_160x95mm-300dpi_v20191015.png";
@@ -45,63 +42,6 @@ canvas.height = img.height;
 img.onload = () => {
   initiateAnalysis();
 };
-
-// Draw rectangle with background color matching average pixel color of above image
-// let pixelColor = document.querySelector("#pixel-color");
-// console.log(pixelColor);
-// pixelColor.style.height = "100px";
-// pixelColor.style.width = "100px";
-
-// pixelColor.style.backgroundColor = `rgba(${imageAvgColor[0]}, ${imageAvgColor[1]}, ${imageAvgColor[2]}, ${imageAvgColor[3]})`;
-
-/*************************Fetch Http Request for Solar GIS map */
-
-// const Url = 'https://solargis.com/file?url=download/Africa/Africa_PVOUT_mid-size-map_180x210mm-300dpi_v20210430.png&amp;bucket=solargis';
-
-// fetch(Url)
-// .then(data => console.log(data));
-
-/*************************Function definition section********/
-
-// function getMsg() {
-//   // Creates a promise object for retrieving the desired data
-//   fetch("http://localhost:4001/api")
-//     // When recieved, exposes the JSON component
-//     .then((response) => {
-//       return response.json();
-//     })
-//     // Displays the message on the page
-//     .then((json) => {
-//       new_msg = "Server message: " + json.msg;
-//     })
-//     .catch((e) => {
-//       console.log(e);
-//       new_msg = e.message;
-//     })
-//     .finally(() => {
-//       document.getElementById("msg").innerHTML = new_msg;
-//     });
-// }
-
-// function getOptions() {
-//   // Creates a promise object for retrieving the desired data
-//   fetch("http://localhost:4001/options")
-//     // When recieved, exposes the JSON component
-//     .then((response) => {
-//       return response.json();
-//     })
-//     // Displays the message on the page
-//     .then((json) => {
-//       new_msg = "Server message: " + json.msg;
-//     })
-//     .catch((e) => {
-//       console.log(e);
-//       new_msg = e.message;
-//     })
-//     .finally(() => {
-//       document.getElementById("msg").innerHTML = new_msg;
-//     });
-// }
 
 function getSelectedMap(mapName) {
   mapName = mapName.replace(/\s+/g, "-").toLowerCase();
