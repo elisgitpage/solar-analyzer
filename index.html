@@ -32,6 +32,18 @@
       #pixel-data #energy-info {
         margin: 0px;
       }
+
+      #map-options {
+        width: 200px;
+        height: 40px;
+        font-family: arial;
+        font-size: 20px;
+      }
+
+      option {
+        font-family: arial;
+        font-size: 20px;
+      }
     </style>
     <div id="msg"></div>
     <div id="main">
@@ -55,9 +67,10 @@
             <div id="yearly-energy"></div>
           </div>
         </div>
+        <select id="map-options"></select>
       </div>
     </div>
 
-    <script src="main.js"></script>
+    <script type="module" src="main.js"></script>
   </body>
 </html>

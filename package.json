@@ -23,5 +23,6 @@
   "bugs": {
     "url": "https://github.com/elisgitpage/solar-analyzer/issues"
   },
-  "homepage": "https://github.com/elisgitpage/solar-analyzer#readme"
+  "homepage": "https://github.com/elisgitpage/solar-analyzer#readme",
+  "type": "module"
 }

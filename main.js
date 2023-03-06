@@ -1,6 +1,8 @@
 // eslint-disable-next-line spaced-comment
 /*******************Script definition section **************/
 
+import { SolarBackendPortal } from "/solar-backend-portal.js";
+
 // select img div and insert world GHI map from as CanvasRenderingContext2D
 // TODO: img div is hidden so really need to just pull data from image file directly
 let rgbaImageData;
@@ -8,7 +10,29 @@ let categoryAverages;
 let energyCategories;
 const colorLegendDims = { x: 43, y: 26 };
 const aimg = document.querySelector("#world-ghi");
-getMsg();
+const solarBackendPortal = new SolarBackendPortal();
+let new_msg = solarBackendPortal.getMsg();
+let mapOptions = await solarBackendPortal.getOptions();
+console.log(mapOptions);
+let select = document.getElementById("map-options");
+
+mapOptions.forEach((mapOption, index) => {
+  let selectOption = document.createElement("option");
+  selectOption.text = mapOption;
+  select.add(selectOption);
+});
+
+select.addEventListener("change", function () {
+  let index = select.selectedIndex;
+  let selectedOption = select.options[index];
+  console.log(`new selected option: ${selectedOption.text}, index: ${index}`);
+  getSelectedMap(selectedOption.text);
+});
+
+// document.getElementById("msg").innerHTML = new_msg;
+// getMsg();
+
+document.getElementById("msg").innerHTML = new_msg;
 const img = new Image();
 img.src = "./assets/World_GHI_mid-size-map_160x95mm-300dpi_v20191015.png";
 img.id = "new-img";
@@ -39,24 +63,50 @@ img.onload = () => {
 
 /*************************Function definition section********/
 
-function getMsg() {
-  // Creates a promise object for retrieving the desired data
-  fetch("http://localhost:4001/api")
-    // When recieved, exposes the JSON component
-    .then((response) => {
-      return response.json();
-    })
-    // Displays the message on the page
-    .then((json) => {
-      new_msg = "Server message: " + json.msg;
-    })
-    .catch((e) => {
-      console.log(e);
-      new_msg = e.message;
-    })
-    .finally(() => {
-      document.getElementById("msg").innerHTML = new_msg;
-    });
+// function getMsg() {
+//   // Creates a promise object for retrieving the desired data
+//   fetch("http://localhost:4001/api")
+//     // When recieved, exposes the JSON component
+//     .then((response) => {
+//       return response.json();
+//     })
+//     // Displays the message on the page
+//     .then((json) => {
+//       new_msg = "Server message: " + json.msg;
+//     })
+//     .catch((e) => {
+//       console.log(e);
+//       new_msg = e.message;
+//     })
+//     .finally(() => {
+//       document.getElementById("msg").innerHTML = new_msg;
+//     });
+// }
+
+// function getOptions() {
+//   // Creates a promise object for retrieving the desired data
+//   fetch("http://localhost:4001/options")
+//     // When recieved, exposes the JSON component
+//     .then((response) => {
+//       return response.json();
+//     })
+//     // Displays the message on the page
+//     .then((json) => {
+//       new_msg = "Server message: " + json.msg;
+//     })
+//     .catch((e) => {
+//       console.log(e);
+//       new_msg = e.message;
+//     })
+//     .finally(() => {
+//       document.getElementById("msg").innerHTML = new_msg;
+//     });
+// }
+
+function getSelectedMap(mapName) {
+  mapName = mapName.replace(/\s+/g, "-").toLowerCase();
+  console.log(mapName);
+  solarBackendPortal.getMap(mapName);
 }
 
 function initiateAnalysis() {
@@ -78,7 +128,7 @@ function initiateAnalysis() {
 
   categoryAverages = calculateEnergyColorAverages();
 
-  for (i = 0; i < 28; i++) {
+  for (let i = 0; i < 28; i++) {
     logColor(categoryAverages[i], `Color category ${i}: `);
   }
 
@@ -118,8 +168,8 @@ function logColor(rgba, message = "") {
 
 function buildEnergyCategories() {
   let energyCategories = [];
-
-  for (i = 0; i < 28; i++) {
+  let bucket = {};
+  for (let i = 0; i < 28; i++) {
     bucket = {
       daily: 2.1 + i * 0.2,
       yearly: 766.5 + i * 73,
@@ -135,9 +185,9 @@ function buildEnergyCategories() {
  */
 function calculateEnergyColorAverages() {
   let averages = [];
-  for (i = 0; i < 28; i++) {
-    x = 303 + (i * (1578 - 303)) / 27;
-    y = 963;
+  for (let i = 0; i < 28; i++) {
+    let x = 303 + (i * (1578 - 303)) / 27;
+    let y = 963;
     let rgbaData,
       redSum = 0,
       greenSum = 0,
@@ -157,10 +207,10 @@ function calculateEnergyColorAverages() {
       }
     }
 
-    redAvg = redSum / pixelCount;
-    greenAvg = greenSum / pixelCount;
-    blueAvg = blueSum / pixelCount;
-    alphaAvg = alphaSum / pixelCount;
+    let redAvg = redSum / pixelCount;
+    let greenAvg = greenSum / pixelCount;
+    let blueAvg = blueSum / pixelCount;
+    let alphaAvg = alphaSum / pixelCount;
     console.log(
       `Position ${i}, R${redAvg}, G${greenAvg}, B${blueAvg}, A${alphaAvg}`
     );
@@ -176,12 +226,12 @@ function findClosestCategory(rgba, averages) {
     distSum,
     closestCategory,
     smallestDist = Number.MAX_VALUE;
-  for (i = 0; i < 28; i++) {
-    category = averages[i];
-    redDist = Math.abs(rgba[0] - category[0]);
-    greenDist = Math.abs(rgba[1] - category[1]);
-    blueDist = Math.abs(rgba[2] - category[2]);
-    distSum = redDist + greenDist + blueDist;
+  for (let i = 0; i < 28; i++) {
+    let category = averages[i];
+    let redDist = Math.abs(rgba[0] - category[0]);
+    let greenDist = Math.abs(rgba[1] - category[1]);
+    let blueDist = Math.abs(rgba[2] - category[2]);
+    let distSum = redDist + greenDist + blueDist;
     if (distSum < smallestDist) {
       smallestDist = distSum;
       closestCategory = i;
@@ -227,8 +277,8 @@ function showPixelData(event) {
   let x = event.clientX - rect.left;
   let y = event.clientY - rect.top;
   let pixelDataDiv = document.getElementById("pixel-data");
-  xGui = x.toFixed(3);
-  yGui = y.toFixed(3);
+  let xGui = x.toFixed(3);
+  let yGui = y.toFixed(3);
   pixelDataDiv.children[0].textContent = `X-coordinate: ${xGui}, Y-coordinate: ${yGui}`;
   let pixelColor = ctx.getImageData(x, y, 1, 1).data;
   let pixelColorDiv = document.getElementById("pixel-color");
@@ -281,10 +331,10 @@ function calculateGlobalSolarEnergyAverage() {
   let startPos = yPosToImageDataPos(170);
   let endPos = yPosToImageDataPos(870);
   for (let i = startPos; i < endPos; i += 4) {
-    red = rgbaImageData.data[i];
-    green = rgbaImageData.data[i + 1];
-    blue = rgbaImageData.data[i + 2];
-    alpha = rgbaImageData.data[i + 3];
+    let red = rgbaImageData.data[i];
+    let green = rgbaImageData.data[i + 1];
+    let blue = rgbaImageData.data[i + 2];
+    let alpha = rgbaImageData.data[i + 3];
     let rgba = [red, green, blue, alpha];
     if (!inGreySpectrum(rgba)) {
       let closestCategory = findClosestCategory(rgba, categoryAverages);
