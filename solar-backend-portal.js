@@ -35,12 +35,24 @@ export class SolarBackendPortal {
     );
   }
 
-  getMap(mapName) {
+  getMapData(mapName) {
     return (
       fetch(this.baseUrl + "/api/map/" + mapName)
         // When recieved, exposes the JSON component
         .then((response) => {
-          return response.json();
+          return response.arrayBuffer();
+        })
+        .then((ab) => {
+          let typedArray = new Uint8Array(ab);
+          let blob = new Blob([typedArray], { type: "image/png" });
+          let urlCreator = window.URL || window.webkitURL;
+          let imgUrl = urlCreator.createObjectURL(blob);
+          return imgUrl;
+          // let b64Response = btoa(blob);
+          // return b64Response;
+        })
+        .catch((error) => {
+          console.log("Caught response error: " + error);
         })
     );
   }

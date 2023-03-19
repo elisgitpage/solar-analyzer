@@ -11,7 +11,7 @@ let energyCategories;
 const colorLegendDims = { x: 43, y: 26 };
 const aimg = document.querySelector("#world-ghi");
 const solarBackendPortal = new SolarBackendPortal();
-let new_msg = solarBackendPortal.getMsg();
+let new_msg = await solarBackendPortal.getMsg();
 let mapOptions = await solarBackendPortal.getOptions();
 console.log(mapOptions);
 let select = document.getElementById("map-options");
@@ -43,10 +43,14 @@ img.onload = () => {
   initiateAnalysis();
 };
 
-function getSelectedMap(mapName) {
+async function getSelectedMap(mapName) {
   mapName = mapName.replace(/\s+/g, "-").toLowerCase();
   console.log(mapName);
-  solarBackendPortal.getMap(mapName);
+  let mapData = await solarBackendPortal.getMapData(mapName);
+  let selectedMap = document.getElementById("selected-map");
+  selectedMap.src = mapData;
+  // selectedMap.src = "data:image/bmp;base64," + mapData;
+  console.log("image updated");
 }
 
 function initiateAnalysis() {
